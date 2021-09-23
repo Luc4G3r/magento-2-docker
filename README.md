@@ -10,7 +10,7 @@ Magento 2 docker setup
   * Example: `/home/ubuntu/dev/docker`
 
 ## Moving to a docker setup
-* If you move your filesystem, make backup of `app/etc` configuration files
+* Make backup of `app/etc` configuration files
 * Export current databases
 * Create a `docker-compose.yml` in your docker configurations directory (or create a subdirectory first)
   * [See sample file](https://github.com/Luc4G3r/magento-2-docker/blob/main/docker-compose/docker-compose-sample.yaml)

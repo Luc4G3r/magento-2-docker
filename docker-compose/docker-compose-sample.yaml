@@ -34,8 +34,8 @@ services:
           - MYSQL_ROOT_PASSWORD=root    # change if needed
           - MYSQL_DATABASE=magento
         volumes:
-          - db-data:/var/lib/mysql
-     elasticsearch:
+          - db-data:/var/lib/mysql     
+     elasticsearch: # not tested
         image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
         container_name: elasticsearch
         environment:
@@ -54,7 +54,7 @@ services:
           - 9200:9200
         networks:
           - elastic
-    redis:
+    redis: # not tested
         image: "redis:alpine"
         container_name: redis
         command: redis-server --requirepass sOmE_sEcUrE_pAsS

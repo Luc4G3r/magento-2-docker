@@ -22,6 +22,8 @@ services:
           - "32823:22"
         links:
           - mysql
+          - redis
+          - elasticsearch
     mysql:
         image: mariadb:10
         container_name: mysql
@@ -33,6 +35,46 @@ services:
           - MYSQL_DATABASE=magento
         volumes:
           - db-data:/var/lib/mysql
+     elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+        container_name: elasticsearch
+        environment:
+          - node.name=elasticsearch
+          - cluster.name=es-docker-cluster
+          - cluster.initial_master_nodes=elasticsearch
+          - bootstrap.memory_lock=true
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits:
+          memlock:
+            soft: -1
+            hard: -1
+        volumes:
+          - elasticdata:/usr/share/elasticsearch/data
+        ports:
+          - 9200:9200
+        networks:
+          - elastic
+    redis:
+        image: "redis:alpine"
+        container_name: redis
+        command: redis-server --requirepass sOmE_sEcUrE_pAsS
+        ports:
+          - "6379:6379"
+        volumes:
+          - $PWD/redis-data:/var/lib/redis
+          - $PWD/redis.conf:/usr/local/etc/redis/redis.conf # path to redis config file
+        environment:
+          - REDIS_REPLICATION_MODE=master
+        networks:
+          node_net:
+            ipv4_address: 127.0.0.1
+
 volumes:
     db-data:
         external: false
+    elasticdata:
+        driver: local
+
+networks:
+  elastic:
+    driver: bridge

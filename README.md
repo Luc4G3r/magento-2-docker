@@ -12,8 +12,18 @@ Magento 2 docker setup
 ## Moving to a docker setup
 * If you move your filesystem, make backup of `app/etc` configuration files
 * Export current databases
-* Create a `docker-compose.yml` in your docker configurations directory
-  * [See sample file]()
+* Create a `docker-compose.yml` in your docker configurations directory (or create a subdirectory first)
+  * [See sample file](https://github.com/Luc4G3r/magento-2-docker/blob/main/docker-compose/docker-compose-sample.yaml)
+  * This file needs some editing depending on your environment wishes of course
+* The volume path of apache container should point to your current magento installation
+* Close all services which run on the ports you defined in your `docker-compose.yml`
+  * You might want to disable autostart of those services with `sudo systemctl disable {service}`
+* Build the container with `docker-compose up -d --build`
+* Verify by opening your host url
+* Access your container with `docker exec -it {container_name} bash`
+* The sample configuration will place the magento project in linked directory called `app`
+  * From there you can run `bin/magento` commands
+* To get the magento instance running, update configurations in `app/etc/env.php`
 
 ### WSL2
 * Make sure the url is added to Windows host file (if `/etc/host` file is generated from Windows)

@@ -24,6 +24,7 @@ Magento 2 docker setup
 * The sample configuration will place the magento project in linked directory called `app`
   * From there you can run `bin/magento` commands
 * To get the magento instance running, update configurations in `app/etc/env.php`
+* Import your database into mysql container with `docker exec -i {CONTAINER_NAME} mysql -u {USER} -p < db.sql`, enter password
 
 ### WSL2
 * Make sure the url is added to Windows host file (if `/etc/host` file is generated from Windows)

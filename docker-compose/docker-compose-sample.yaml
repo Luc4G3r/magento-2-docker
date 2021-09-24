@@ -1,87 +1,106 @@
 version: '3'
 services:
-    apache:
-        image: webdevops/php-apache-dev:ubuntu-18.04 # change tag if necessary
-        container_name: apache
-        restart: always
-        user: application
-        environment:
-          - WEB_ALIAS_DOMAIN=${DOMAIN}
-          - WEB_DOCUMENT_ROOT=/app/pub
-          - PHP_DATE_TIMEZONE=${TIMEZONE}
-          - PHP_DISPLAY_ERRORS=1
-          - PHP_MEMORY_LIMIT=2048M        # stronger machines can use higher value
-          - PHP_MAX_EXECUTION_TIME=300
-          - PHP_POST_MAX_SIZE=500M
-          - PHP_UPLOAD_MAX_FILESIZE=1024M
-        volumes:
-          - ${MAGENTO_ROOT}:/app:cached
-        ports:
-          - "80:80"
-          - "443:443"
-          - "32823:22"
-        links:
-          - mysql
-          - redis
-          - elasticsearch
-    mysql:
-        image: mariadb:10
-        container_name: mysql
-        restart: always
-        ports:
-          - "3306:3306"
-        environment:
-          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-          - MYSQL_DATABASE=magento
-        volumes:
-          - db-data:/var/lib/mysql     
-     elasticsearch: # not tested
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
-        container_name: elasticsearch
-        environment:
-          - node.name=elasticsearch
-          - cluster.name=es-docker-cluster
-          - cluster.initial_master_nodes=elasticsearch
-          - bootstrap.memory_lock=true
-          - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        ulimits:
-          memlock:
-            soft: -1
-            hard: -1
-        volumes:
-          - elasticdata:/usr/share/elasticsearch/data
-        ports:
-          - 9200:9200
-        networks:
-          - elastic
-    redis: # not tested
-        image: "redis:alpine"
-        container_name: redis
-        command: redis-server --requirepass ${REDIS_PASS}
-        ports:
-          - "6379:6379"
-        volumes:
-          - $PWD/redis-data:/var/lib/redis
-          - $PWD/redis.conf:/usr/local/etc/redis/redis.conf # path to redis config file
-        environment:
-          - REDIS_REPLICATION_MODE=master
-        networks:
-          node_net:
-            ipv4_address: 127.0.0.1
-     mailhog: # not tested
-        image: mailhog/mailhog
-        container_name: mailhog
-        logging:
-          driver: 'none'  # disable saving logs
-        ports:
-          - 1025:1025 # smtp server
-          - 8025:8025 # web ui
+  apache:
+    image: webdevops/php-apache-dev:7.4 # change tag if necessary
+    container_name: apache
+    restart: always
+    user: application
+    environment:
+      - WEB_ALIAS_DOMAIN=${DOMAIN}
+      - WEB_DOCUMENT_ROOT=/app/pub
+      - PHP_DATE_TIMEZONE=${TIMEZONE}
+      - PHP_DISPLAY_ERRORS=1
+      - PHP_MEMORY_LIMIT=2048M        # stronger machines can use higher value
+      - PHP_MAX_EXECUTION_TIME=300
+      - PHP_POST_MAX_SIZE=500M
+      - PHP_UPLOAD_MAX_FILESIZE=1024M
+    volumes:
+      - ${MAGENTO_ROOT}:/app:cached
+      - ${PWD}/env.php:/app/app/etc/env.php
+    ports:
+      - "80:80"
+      - "443:443"
+      - "32823:22"
+    links:
+      - mysql
+      - redis
+      - elasticsearch
+      - mailhog
+    networks:
+      - redis
+      - elasticsearch
+      - mysql
+      - mailhog
+  mysql:
+    image: mariadb:10.2
+    container_name: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=magento
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - mysql
+  elasticsearch: # not tested
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=elasticsearch
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - elasticsearch
+  redis: # not tested
+    image: docker.io/bitnami/redis:6.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/bitnami/redis/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHALL
+    networks:
+      - redis
+  mailhog: # not tested
+    image: mailhog/mailhog
+    container_name: mailhog
+    logging:
+      driver: 'none'  # disable saving logs
+    ports:
+      - "1025:1025" # smtp server
+      - "8025:8025" # web ui
+    networks:
+      - mailhog
 volumes:
-    db-data:
-        external: false
-    elasticdata:
-        driver: local
+  db-data:
+    external: false
+  elasticdata:
+    driver: local
+  redis_data:
+    driver: local
 
 networks:
-  elastic:
+  elasticsearch:
+    driver: bridge
+  redis:
+    driver: bridge
+  mailhog:
+    driver: bridge
+  mysql:
     driver: bridge

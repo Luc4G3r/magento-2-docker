@@ -70,6 +70,7 @@ services:
             ipv4_address: 127.0.0.1
      mailhog: # not tested
         image: mailhog/mailhog
+        container_name: mailhog
         logging:
           driver: 'none'  # disable saving logs
         ports:

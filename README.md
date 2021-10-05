@@ -27,8 +27,8 @@ Magento 2 docker setup instructions and configurations
 ### Docker dev setup
 * Clone this repository
 * Copy `*/.env.sample` files to `*/.env`
-* Copy `magenot2-project/data/magento/env.php.sample` to `magenot2-project/data/magento/env.php`
-* Copy `magenot2-project/data/php/additional.php.ini.sample` to `magenot2-project/data/php/additional.php.ini`
+* Copy `magento2-project/data/magento/env.php.sample` to `magento2-project/data/magento/env.php`
+* Copy `magento2-project/data/php/additional.php.ini.sample` to `magento2-project/data/php/additional.php.ini`
 * Configure copied files for needed images
 * Remove unwanted dependencies from `magento2-project/docker-compose.yml`
 * Run `docker-compose up -d --build` in directories of needed images

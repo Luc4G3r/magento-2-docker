@@ -1,0 +1,15 @@
+version: '3'
+services:
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    logging:
+      driver: 'local' # enable docker log access
+    ports:
+      - "1025:1025" # smtp server
+      - "8025:8025" # web ui
+    networks:
+      - mailhog
+networks:
+  mailhog:
+    driver: bridge

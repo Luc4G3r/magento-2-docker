@@ -1,0 +1,20 @@
+version: '3'
+services:
+  redis:
+    image: docker.io/bitnami/redis:6.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/bitnami/redis/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHALL
+    networks:
+      - redis
+volumes:
+  redis_data:
+    driver: local
+networks:
+  redis:
+    driver: bridge

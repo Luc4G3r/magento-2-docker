@@ -1,33 +1,62 @@
 # magento-2-docker
-Magento 2 docker setup
+Magento 2 docker setup instructions and configurations
 
-## Resources
+## List of contents
+* [Images contained in this repository](#images-contained-in-this-repository)
+* [Resources](#resources)
+* [Docker dev setup](#docker-dev-setup)
+* [Moving to a docker setup](#moving-to-a-docker-setup)
+* [WSL2](#wsl2)
+
+### Images contained in this repository
+* magento2-project
+  * `docker-compose.yml` configuration for an apache2 (magento 2) dev environment
+* mariadb
+  * `docker-compose.yml` configuration for a local mariadb mysql server
+* mailhog
+  * `docker-compose.yml` configuration for a local smtp server
+* elasticsearch
+  * `docker-compose.yml` configuration for a local elasticsearch server
+* redis
+  * `docker-compose.yml` configuration for a local redis cache server
+
+### Resources
 * [Shawn Abrahamson's Tutorial on Magento 2 with Docker](https://www.magemodule.com/all-things-magento/magento-2-tutorials/docker-magento-2-development/)
 * [Raroslav Rogoza's Tutorial on Magento 2 with Docker in WSL2](https://www.atwix.com/magento/magento-2-with-docker-for-windows-and-wsl-2/)
 
-## Docker dev setup
-* Create a path for your docker configurations in your filesystem
-  * Example: `/home/ubuntu/dev/docker`
+### Docker dev setup
+* Clone this repository
+* Copy `*/.env.sample` files to `*/.env`
+* Copy `magenot2-project/data/magento/env.php.sample` to `magenot2-project/data/magento/env.php`
+* Copy `magenot2-project/data/php/additional.php.ini.sample` to `magenot2-project/data/php/additional.php.ini`
+* Configure copied files for needed images
+* Remove unwanted dependencies from `magento2-project/docker-compose.yml`
+* Run `docker-compose up -d --build` in directories of needed images
+  * Depending images (magento2) will need to be build after dependencies
 
-## Moving to a docker setup
-* Make backup of `app/etc` configuration files
-* Export current databases
-* Create a `docker-compose.yml` in your docker configurations directory (or create a subdirectory first)
-  * [See sample file](https://github.com/Luc4G3r/magento-2-docker/blob/main/docker-compose/docker-compose-sample.yaml)
-  * This file needs some editing depending on your environment wishes of course
-* The volume path of apache container should point to your current magento installation
+### Moving to a docker setup
+* Make backup of `app/etc` configuration files in magento project
+  * Copy the `app/etc/env.php` to `magento2-project/data/magento/env.php`
 * Close all services which run on the ports you defined in your `docker-compose.yml`
   * You might want to disable autostart of those services with `sudo systemctl disable {service}`
-* Build the container with `docker-compose up -d --build`
+* Follow [docker dev setup](#docker-dev-setup) steps
+* Import current databases
+  * Export current databases with `mysqldump`
+  * Build mariadb image with `docker-compose`
+  * Enter mariadb container with `docker exec -it mariadb bash`
+  * Import your exported databases into mariadb docker container
+    * `docker exec -i {CONTAINER_NAME} mysql -u {USER} -p < db.sql`, enter password
+* Build other needed containers with `docker-compose up -d --build`
 * Verify by opening your host url
-* Access your container with `docker exec -it {container_name} bash`
+* Access your containers with `docker exec -it {container_name} bash`
 * The sample configuration will place the magento project in linked directory called `app`
   * From there you can run `bin/magento` commands
 * To get the magento instance running, update configurations in `app/etc/env.php`
-* Import your database into mysql container with `docker exec -i {CONTAINER_NAME} mysql -u {USER} -p < db.sql`, enter password
+  * Other containers adapter configurations will have to be applied here
 
-### WSL2
-* Make sure the url is added to Windows host file (if `/etc/host` file is generated from Windows)
-  * You don't have to change anything, if you want to keep the current url
+#### WSL2
+* Make sure all urls are added to Windows host file (if `/etc/host` file is generated from Windows)
 * Consider installing Docker Desktop on Windows
-  * It supports running and managing containers in multiple WSL2 instances
+  * Supports running and managing containers in multiple WSL2 instances
+  * Supports PHPStorm Service tab configuration, PHP interpreter, xdebug and much more  
+    (Docker Desktop will handle Windows to WSL2 path translations, very handy!)

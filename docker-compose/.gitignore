@@ -1,0 +1,6 @@
+# mariadb
+mariadb/data/db/*
+!mariadb/data/.gitkeep
+# elasticsearch
+elasticsearch/data/db/*
+!elasticsearch/data/db/.gitkeep

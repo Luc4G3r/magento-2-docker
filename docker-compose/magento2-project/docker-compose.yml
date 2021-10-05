@@ -1,0 +1,43 @@
+version: '3'
+services:
+  paradies-pool-web:
+    image: webdevops/php-apache-dev:${PHP_VERSION} # change tag if necessary
+    container_name: paradies-pool-web
+    restart: on-failure
+    user: application
+    environment:
+      - WEB_ALIAS_DOMAIN=${DOMAIN}
+      - WEB_DOCUMENT_ROOT=${DOCKER_PROJECT_DIR}/pub
+      - PHP_DATE_TIMEZONE=${TIMEZONE}
+      - PHP_DISPLAY_ERRORS=1
+      - PHP_MEMORY_LIMIT=2048M        # stronger machines can use higher value
+      - PHP_MAX_EXECUTION_TIME=300
+      - PHP_POST_MAX_SIZE=500M
+      - PHP_UPLOAD_MAX_FILESIZE=1024M
+    volumes:
+      - ${MAGENTO_ROOT}:${DOCKER_PROJECT_DIR}:cached
+      - ./data/magento/env.php:${DOCKER_PROJECT_DIR}/app/etc/env.php
+      - ./data/php/additional.php.ini:/usr/local/etc/php/conf.d/custom.ini
+    ports:
+      - "80:80"
+      - "443:443"
+      - "32823:22"
+    external_links:
+      - mysql
+      - mailhog
+      - elasticsearch
+      - redis
+    networks:
+      - mariadb_mysql
+      - mailhog_mailhog
+      - elasticsearch_elasticsearch
+      - redis_redis
+networks:
+  mariadb_mysql:
+    external: true
+  mailhog_mailhog:
+    external: true
+  elasticsearch_elasticsearch:
+    external: true
+  redis_redis:
+    external: true

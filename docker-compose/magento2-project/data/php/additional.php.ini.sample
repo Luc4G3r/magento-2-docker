@@ -1,0 +1,16 @@
+[xdebug]
+xdebug.mode=debug
+# version 3
+#xdebug.start_with_request=true
+xdebug.client_port=9003
+xdebug.discover_client_host=1
+xdebug.client_host=host.docker.internal
+# version 2
+xdebug.remote_enable=true
+xdebug.remote_port=9003
+xdebug.remote_host=host.docker.internal
+xdebug.remote_autostart=false
+# common
+xdebug.idekey=phpstorm
+xdebug.remote_handler=dbgp
+xdebug.connect_timeout_ms=4000

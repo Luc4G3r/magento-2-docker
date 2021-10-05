@@ -1,3 +1,4 @@
+# contains additional php.ini settings
 [xdebug]
 xdebug.mode=debug
 # version 3

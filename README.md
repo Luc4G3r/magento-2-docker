@@ -6,7 +6,7 @@ Magento 2 docker setup instructions and configurations
 * [Resources](#resources)
 * [Docker dev setup](#docker-dev-setup)
 * [Moving to a docker setup](#moving-to-a-docker-setup)
-* [WSL2](#wsl2)
+* [Multiple projects](#multiple-projects)
 
 ### Images contained in this repository
 * magento2-project
@@ -60,3 +60,9 @@ Magento 2 docker setup instructions and configurations
   * Supports running and managing containers in multiple WSL2 instances
   * Supports PHPStorm Service tab configuration, PHP interpreter, xdebug and much more  
     (Docker Desktop will handle Windows to WSL2 path translations, very handy!)
+
+### Multiple projects
+* `docker stop {apache2 container}`
+* Copy `magento2-project` to another directory
+* Append files and `.env` configuration
+* Run `docker-compose up -d --build` in new directory

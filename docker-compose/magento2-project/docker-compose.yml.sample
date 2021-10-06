@@ -2,7 +2,7 @@ version: '3'
 services:
   paradies-pool-web:
     image: webdevops/php-apache-dev:${PHP_VERSION} # change tag if necessary
-    container_name: paradies-pool-web
+    container_name: magento2-web
     restart: on-failure
     user: application
     environment:

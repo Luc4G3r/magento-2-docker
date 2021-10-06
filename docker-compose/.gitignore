@@ -1,6 +1,18 @@
+# default
+elasticsearch/.env
+magento2-project/.env
+mailhog/.env
+mariadb/.env
+redis/.env
+
+# magento 2
+magento2-project/data/magento/env.php
+magento2-project/data/php/additional.php.ini
+
 # mariadb
 mariadb/data/db/*
 !mariadb/data/.gitkeep
+
 # elasticsearch
 elasticsearch/data/db/*
 !elasticsearch/data/db/.gitkeep
